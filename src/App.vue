@@ -25,7 +25,7 @@
           <input type="checkbox" v-model="task.done" />
           <span :class="{ done: task.done }">{{ task.title }}</span>
         </div>
-        <button @click="removeTask(index)" class="delete-button">Hapus</button>
+        <button @click="confirmRemoveTask(index)" class="delete-button">Hapus</button>
       </li>
     </ul>
   </div>
@@ -50,8 +50,11 @@ const addTask = () => {
   }
 }
 
-const removeTask = (index) => {
-  tasks.value.splice(index, 1)
+const confirmRemoveTask = (index) => {
+  const isConfirmed = window.confirm('Apakah Anda yakin ingin menghapus kegiatan ini?')
+  if (isConfirmed) {
+    tasks.value.splice(index, 1)
+  }
 }
 
 const setFilter = (pendingOnly) => {
