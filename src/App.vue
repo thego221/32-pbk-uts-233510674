@@ -34,8 +34,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 
+const tasks = ref([
+  { title: 'Belajar Vue.js', done: false },
+  { title: 'Mengerjakan UTS', done: false },
+  { title: 'Membaca Buku', done: true } 
+])
 const newTask = ref('')
-const tasks = ref([])
 const showOnlyPending = ref(false)
 const dropdownOpen = ref(false)
 
