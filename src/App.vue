@@ -1,27 +1,34 @@
 <template>
   <div class="todo-container">
-  <h1>📋 Daftar Kegiatan</h1>
-  <form @submit.prevent="addTask">
-    <input v-model="newTask" type="text" placeholder="Tambahkan kegiatan..." />
-    <button type="submit">Tambah</button>
-  </form>
+    <h1>📋 Daftar Kegiatan</h1>
 
-  <div class="filter">
-    <span>Total: {{ tasks.length }}</span>
-    <label><input type="checkbox" v-model="showOnlyPending" /> Hanya yang belum selesai</label>
-  </div>
+    <form @submit.prevent="addTask" class="form">
+      <input v-model="newTask" type="text" placeholder="Tambahkan kegiatan..." />
+      <button type="submit">Tambah</button>
+    </form>
 
-  <ul>
-    <li v-for="(task, index) in filteredTasks" :key="index">
-      <div class="task-title">
-        <input type="checkbox" v-model="task.done" />
-        <span :class="{ done: task.done }">{{ task.title }}</span>
+    <div class="filter-dropdown" v-click-outside="closeDropdown">
+      <button @click="dropdownOpen = !dropdownOpen" class="filter-toggle">
+        Filter: {{ showOnlyPending ? 'Belum Selesai' : 'Semua' }}
+      </button>
+      <div v-if="dropdownOpen" class="dropdown-menu">
+        <ul>
+          <li @click="setFilter(false)">Tampilkan Semua</li>
+          <li @click="setFilter(true)">Tampilkan Belum Selesai</li>
+        </ul>
       </div>
-      <button @click="removeTask(index)">Hapus</button>
-    </li>
-  </ul>
-</div>
+    </div>
 
+    <ul>
+      <li v-for="(task, index) in filteredTasks" :key="index" class="task-item">
+        <div class="task-title">
+          <input type="checkbox" v-model="task.done" />
+          <span :class="{ done: task.done }">{{ task.title }}</span>
+        </div>
+        <button @click="removeTask(index)" class="delete-button">Hapus</button>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
@@ -30,6 +37,7 @@ import { ref, computed } from 'vue'
 const newTask = ref('')
 const tasks = ref([])
 const showOnlyPending = ref(false)
+const dropdownOpen = ref(false)
 
 const addTask = () => {
   if (newTask.value.trim()) {
@@ -42,7 +50,18 @@ const removeTask = (index) => {
   tasks.value.splice(index, 1)
 }
 
-const filteredTasks = computed(() =>
-  showOnlyPending.value ? tasks.value.filter(t => !t.done) : tasks.value
-)
+const setFilter = (pendingOnly) => {
+  showOnlyPending.value = pendingOnly
+  dropdownOpen.value = false
+}
+
+const closeDropdown = () => {
+  dropdownOpen.value = false
+}
+
+const filteredTasks = computed(() => {
+  return showOnlyPending.value
+    ? tasks.value.filter(task => !task.done)
+    : tasks.value
+})
 </script>
